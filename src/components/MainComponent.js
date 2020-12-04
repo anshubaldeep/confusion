@@ -4,26 +4,27 @@ import Header from './HeaderComponent';
 import Footer from './FooterComponent';
 import Menu from './MenuComponent';
 import DishdetailComponent from './DishdetailComponent';
-import { DISHES } from '../shared/dishes';
-import { COMMENTS } from '../shared/comments';
-import { PROMOTIONS } from '../shared/promotions';
-import { LEADERS } from '../shared/leaders';
-import { Redirect, Route, Switch } from 'react-router';
+import { Redirect, Route, Switch ,withRouter} from 'react-router';
 import Contact from './ContactComponent.js';
 import About from './AboutUsComponent.js';
+import TodoList from './TodoList.js';
+import { connect } from 'react-redux';
+
+
+
+const mapStateToProps=state=>{
+  return{
+    dishes: state.dishes,
+    comments: state.comments,
+    promotions: state.promotions,
+    leaders: state.leaders    
+  }
+}
+
+
 
   class MainComponent extends Component{
-  constructor(props) {
-    super(props);
-    this.state={
-      dishes:DISHES,
-      comments: COMMENTS,
-      promotions: PROMOTIONS,
-      leaders: LEADERS,
-      selectedDish:null
-    }
-  }
-
+  
   onDishSelect(dishId){
     this.setState({selectedDish:dishId});
 }
@@ -31,7 +32,7 @@ import About from './AboutUsComponent.js';
   render(){
     const menuPage=()=>(
       <React.Fragment>
-        <Menu dishes={this.state.dishes}
+        <Menu dishes={this.props.dishes}
             onClick={(dishId)=>this.onDishSelect(dishId)}
         />      
       </React.Fragment>
@@ -39,19 +40,19 @@ import About from './AboutUsComponent.js';
 
     const DishWithId = ({match}) => {
       return(
-          <DishdetailComponent dish={this.state.dishes.filter((dish) => dish.id === parseInt(match.params.dishId,10))[0]} 
-            comments={this.state.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId,10))} />
+          <DishdetailComponent dish={this.props.dishes.filter((dish) => dish.id === parseInt(match.params.dishId,10))[0]} 
+            comments={this.props.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId,10))} />
       );
     };
 
     const HomePage=()=>(
-      <Home dish={this.state.dishes.filter((dish) => dish.featured)[0]}
-      promotion={this.state.promotions.filter((promo) => promo.featured)[0]}
-      leader={this.state.leaders.filter((leader) => leader.featured)[0]}></Home>
+      <Home dish={this.props.dishes.filter((dish) => dish.featured)[0]}
+      promotion={this.props.promotions.filter((promo) => promo.featured)[0]}
+      leader={this.props.leaders.filter((leader) => leader.featured)[0]}></Home>
     )
 
       const AboutComponent=()=>(
-        <About leaders={this.state.leaders}/>
+        <About leaders={this.props.leaders}/>
       )
 
   return (
@@ -63,6 +64,7 @@ import About from './AboutUsComponent.js';
             <Route path='/menu/:dishId' component={DishWithId} />
             <Route exact path="/aboutus" component={AboutComponent}/>
             <Route exact path="/contactus" component={Contact}/>
+            <Route exact path="/todo" component={TodoList}/>
             <Redirect to="/home"/>
           </Switch>
         <Footer/>
@@ -70,4 +72,4 @@ import About from './AboutUsComponent.js';
   );
     }
 }
-export default MainComponent;
+export default withRouter(connect(mapStateToProps)(MainComponent));
