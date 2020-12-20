@@ -11,6 +11,7 @@ import { Card, CardImg, CardText, CardBody,
     Label,
     Button,Col,Row} from 'reactstrap';
 import { Control, LocalForm, Errors } from 'react-redux-form';
+import Loading from './LoadingComponent';
 
     function RenderDish({dish}) {
             return(
@@ -26,7 +27,7 @@ import { Control, LocalForm, Errors } from 'react-redux-form';
         )
       }
   
-      function RenderComments({comments}) {
+      function RenderComments({comments,addComment,dishId}) {
        return(
         <div className="col-12 col-md-5 m-1">
         <h4>Comments</h4>
@@ -38,7 +39,7 @@ import { Control, LocalForm, Errors } from 'react-redux-form';
                 </p>
             )
         })}
-        <CommentForm/>
+        <CommentForm dishId={dishId} addComment={addComment}/>
       </div>
        )
       }
@@ -63,7 +64,8 @@ import { Control, LocalForm, Errors } from 'react-redux-form';
 
           handleSubmit=(values)=>{
               console.log('Submit clicked');
-              alert('The values are '+JSON.stringify(values));
+              alert(values.comment);
+              this.props.addComment(this.props.dishId, values.rating, values.author, values.comment);
           }
         render()
         {
@@ -138,7 +140,25 @@ import { Control, LocalForm, Errors } from 'react-redux-form';
     
 
 const DishdetailComponent =(props)=>{
-        
+    if (props.isLoading) {
+        return(
+            <div className="container">
+                <div className="row">            
+                   <Loading/>
+                </div>
+            </div>
+        );
+    }
+    else if (props.errMess) {
+        return(
+            <div className="container">
+                <div className="row">            
+                    <h4>{props.errMess}</h4>
+                </div>
+            </div>
+        );
+    }
+    else if (props.dish != null){
             return(
                 <div className="container">
                 <div className="row">
@@ -157,11 +177,13 @@ const DishdetailComponent =(props)=>{
                         <RenderDish dish={props.dish} />
                     
                     
-                        <RenderComments comments={props.comments} />
+                        <RenderComments comments={props.comments}
+                        addComment={props.addComment}
+                        dishId={props.dish.id} />
                     
                 </div>
                 </div>
-            )
+            )} 
                 
     }
 
