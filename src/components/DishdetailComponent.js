@@ -28,7 +28,7 @@ import { baseUrl } from '../shared/baseURL';
         )
       }
   
-      function RenderComments({comments,addComment,dishId}) {
+      function RenderComments({comments,postComment,dishId}) {
        return(
         <div className="col-12 col-md-5 m-1">
         <h4>Comments</h4>
@@ -40,7 +40,7 @@ import { baseUrl } from '../shared/baseURL';
                 </p>
             )
         })}
-        <CommentForm dishId={dishId} addComment={addComment}/>
+        <CommentForm dishId={dishId} postComment={postComment}/>
       </div>
        )
       }
@@ -65,8 +65,7 @@ import { baseUrl } from '../shared/baseURL';
 
           handleSubmit=(values)=>{
               console.log('Submit clicked');
-              alert(values.comment);
-              this.props.addComment(this.props.dishId, values.rating, values.author, values.comment);
+              this.props.postComment(this.props.dishId, values.rating, values.author, values.comment);
           }
         render()
         {
@@ -179,7 +178,7 @@ const DishdetailComponent =(props)=>{
                     
                     
                         <RenderComments comments={props.comments}
-                        addComment={props.addComment}
+                        postComment={props.postComment}
                         dishId={props.dish.id} />
                     
                 </div>
